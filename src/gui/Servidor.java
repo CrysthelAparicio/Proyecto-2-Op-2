@@ -30,7 +30,36 @@ public class Servidor extends javax.swing.JFrame {
             @Override
             public float dividir(float numero1, float numero2) throws RemoteException {
                 return numero1 / numero2;
-            };
+            }
+            
+            @Override
+            public void desmontar() throws RemoteException {
+            }
+            
+            @Override
+            public JTree cargarDirectorio() throws RemoteException {
+                return new JTree();
+            }
+
+            @Override
+            public File crearArchivo(File archivoaCrear) throws RemoteException {
+                return new File("");
+            }
+
+            @Override
+            public File editarArchivo(File editandoArchivo) throws RemoteException {
+                return new File("");
+            }
+
+            @Override
+            public File eliminarArchivo(File archivoaEliminar) throws RemoteException {
+                return new File("");
+            }
+
+            @Override
+            public File eliminarDirectorio(File directorioaEliminar) throws RemoteException {
+                return new File("");
+            }
         }, 0);
         
         registry = LocateRegistry.createRegistry(PUERTO);
