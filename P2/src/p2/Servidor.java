@@ -4,7 +4,16 @@
  * and open the template in the editor.
  */
 package p2;
-
+import java.io.File;
+import java.rmi.AlreadyBoundException;
+import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JTree;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
 
 /**
  *
@@ -15,8 +24,59 @@ public class Servidor extends javax.swing.JFrame {
     /**
      * Creates new form Servidor
      */
-    public Servidor() {
+    public Servidor() throws RemoteException, AlreadyBoundException {
         initComponents();
+        DefaultMutableTreeNode r = new DefaultMutableTreeNode("Root");
+        cargarDirectorio("./Root",r);
+        
+        server = new Comunicacion("Servidor",new DefaultTreeModel(r));
+        Registry registry = LocateRegistry.createRegistry(4200);
+        registry.bind("proyecto", server);
+        
+        
+        this.arbolServidor.setModel(new DefaultTreeModel(r));
+        
+        this.setLocationRelativeTo(null);
+    }
+    
+      public void cargarDirectorio(String root, DefaultMutableTreeNode nodo){
+        File directory = new File(root);
+        File[] list = directory.listFiles();
+        for(File file: list){
+            if(file.isFile()){
+                String nombre = file.getName();
+                nodo.add(new DefaultMutableTreeNode(nombre));
+                //System.out.println("Archivo: " + file.getName());
+                //System.out.println("Parent: " + getParentName(file.getParent()));
+                
+            }else if(file.isDirectory()){
+                DefaultMutableTreeNode subDirectory = new DefaultMutableTreeNode(file.getName());
+                cargarDirectorio(file.getAbsolutePath(),subDirectory);
+                nodo.add(subDirectory);
+            }
+        }
+        
+    }
+
+       public static String getParentName(String parent){
+        String retVal = "";
+        String retValReversed = "";
+        //System.out.println("Parent received: " + parent);
+        //System.out.println(parent.length()-1);
+        for (int i = parent.length()-1; i >= 0 ; i--) {
+            //System.out.println("i = " + i);
+            //System.out.println("entro al if");
+            if(parent.charAt(i)== '\\'){
+                i = -1;
+            }else{
+                retVal += parent.charAt(i);
+                //System.out.println("concateno a parent");
+            }
+        }
+        for (int i = retVal.length()-1; i >= 0; i--) {
+            retValReversed += retVal.charAt(i);
+        }
+        return retValReversed;
     }
 
     /**
@@ -102,8 +162,14 @@ public class Servidor extends javax.swing.JFrame {
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new Servidor().setVisible(true);
+             public void run() {
+                try {
+                    new Servidor().setVisible(true);
+                } catch (RemoteException ex) {
+                    Logger.getLogger(Servidor.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (AlreadyBoundException ex) {
+                    Logger.getLogger(Servidor.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
     }
@@ -113,4 +179,5 @@ public class Servidor extends javax.swing.JFrame {
     private javax.swing.JButton jButton1;
     private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
+Comunicacion server;
 }
