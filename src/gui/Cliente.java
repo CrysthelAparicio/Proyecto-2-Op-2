@@ -13,13 +13,14 @@ import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import fs.*;
+import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeSelectionModel;
 
 public class Cliente extends javax.swing.JFrame {
 
-    private static final String IP = "127.0.0.1"; // Puedes cambiar a localhost
+    private static final String IP = "192.168.0.103"; // Puedes cambiar a localhost
     private static final int PUERTO = 1100; //Si cambias aquí el puerto, recuerda cambiarlo en el servidor
 
     public Registry registry;
@@ -63,6 +64,11 @@ public class Cliente extends javax.swing.JFrame {
                 crearDirMouseClicked(evt);
             }
         });
+        crearDir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                crearDirActionPerformed(evt);
+            }
+        });
         popMenuDir.add(crearDir);
 
         eliminarDir.setText("Eliminar Directorio");
@@ -79,6 +85,8 @@ public class Cliente extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
+        javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("root");
+        arbolCliente.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
         arbolCliente.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 arbolClienteMouseClicked(evt);
@@ -143,7 +151,10 @@ public class Cliente extends javax.swing.JFrame {
             DefaultTreeModel modelo = interfaz.cargarDirectorio();
             arbolCliente.setModel(modelo);
         } catch (Exception e) {
+            System.out.println("problem!!!!!!!!!!");
+            e.printStackTrace();
         }
+        System.out.println("did it");
 
 
     }//GEN-LAST:event_btn_cargarArchivoActionPerformed
@@ -179,10 +190,29 @@ public class Cliente extends javax.swing.JFrame {
     }//GEN-LAST:event_arbolClienteMouseClicked
 
     private void crearDirMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_crearDirMouseClicked
-        // TODO add your handling code here:
+        
 
 
     }//GEN-LAST:event_crearDirMouseClicked
+
+    private void crearDirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_crearDirActionPerformed
+        DefaultTreeModel modelo = (DefaultTreeModel) arbolCliente.getModel();
+        DefaultMutableTreeNode node = (DefaultMutableTreeNode) arbolCliente.getLastSelectedPathComponent();
+        System.out.println(node);
+        String path = pathArchivo();
+        String name = JOptionPane.showInputDialog(this, "Nombre del Directorio");
+        path = path.concat(name);
+        path = path.concat("/");
+        System.out.println(path);
+        File dir = new File(path);
+        
+        try {
+            interfaz.crearArchivo(dir);    
+        } catch (Exception e) {
+        }
+        cargarArchivo();
+        
+    }//GEN-LAST:event_crearDirActionPerformed
 
     public void cargarArchivo() {
         try {
@@ -233,6 +263,24 @@ public class Cliente extends javax.swing.JFrame {
 
         });
     }
+    public String pathArchivo( ){
+        String ruta = "./";
+        arbolCliente.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+        
+            int row = arbolCliente.getSelectionCount();
+                DefaultTreeModel modelo = (DefaultTreeModel) arbolCliente.getModel();
+                DefaultMutableTreeNode node = (DefaultMutableTreeNode) arbolCliente.getLastSelectedPathComponent();
+                for (int i = 0; i < node.getPath().length; i++) {
+                    ruta =ruta.concat(node.getPath()[i].toString());
+                    ruta =ruta.concat("/");
+                    
+                }
+                
+                
+            
+        
+        return ruta;
+}
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
