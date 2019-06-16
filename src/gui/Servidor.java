@@ -1,10 +1,11 @@
 package gui;
 
 import fs.FSInterfaz;
+import fs.WatchDir;
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.WatchService;
 import java.rmi.AlreadyBoundException;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
@@ -13,7 +14,6 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
@@ -23,7 +23,6 @@ public class Servidor extends javax.swing.JFrame {
 
     public Remote remote;
     public Registry registry;
-    public WatchService watcher;
     
     public Servidor() throws RemoteException, AlreadyBoundException {
         initComponents();
@@ -73,10 +72,11 @@ public class Servidor extends javax.swing.JFrame {
         DefaultMutableTreeNode root = new DefaultMutableTreeNode("RootServer");
         cargarArbol("./RootServer", root);
         arbolServidor.setModel(new DefaultTreeModel(root));
-        
-//        watcher = new WatchService();
-        
+                
         this.setLocationRelativeTo(null);
+    }
+    
+    void dirWatcher() {
     }
 
     void cargarArbol(String dir, DefaultMutableTreeNode node) {
@@ -171,6 +171,13 @@ public class Servidor extends javax.swing.JFrame {
         }
         //</editor-fold>
 
+        try {
+            Path dir = Paths.get("./RootServer");
+            Thread hilo = new Thread(new WatchDir(dir, true));
+            hilo.start();
+        } catch (IOException e) {
+        }
+        
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
              public void run() {
