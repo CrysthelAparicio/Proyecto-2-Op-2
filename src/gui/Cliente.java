@@ -13,9 +13,11 @@ import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import fs.*;
+import javax.swing.tree.DefaultTreeModel;
 
 public class Cliente extends javax.swing.JFrame {
-    private static final String IP = "127.0.0.1"; // Puedes cambiar a localhost
+
+    private static final String IP = "192.168.0.107"; // Puedes cambiar a localhost
     private static final int PUERTO = 1100; //Si cambias aquí el puerto, recuerda cambiarlo en el servidor
 
     public Registry registry;
@@ -27,10 +29,9 @@ public class Cliente extends javax.swing.JFrame {
         registry = LocateRegistry.getRegistry(IP, PUERTO);
         interfaz = (FSInterfaz) registry.lookup("Calculadora"); //Buscar en el registro...
         // resultado = interfaz.dividir(numero1, numero2);
-        
+
         this.setLocationRelativeTo(null);
     }
-
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -41,119 +42,126 @@ public class Cliente extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jButton1 = new javax.swing.JButton();
+        popMenuDir = new javax.swing.JPopupMenu();
+        crearArchivo = new javax.swing.JMenuItem();
+        crearDir = new javax.swing.JMenuItem();
+        eliminarDir = new javax.swing.JMenuItem();
+        popMenuArchivo = new javax.swing.JPopupMenu();
+        abrirArchivo = new javax.swing.JMenuItem();
+        eliminarArchivo = new javax.swing.JMenuItem();
         jScrollPane1 = new javax.swing.JScrollPane();
         arbolCliente = new javax.swing.JTree();
-        jButton2 = new javax.swing.JButton();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        textoArchivo = new javax.swing.JTextArea();
-        jButton3 = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
-        clientName = new javax.swing.JTextField();
+        btn_cargarArchivo = new javax.swing.JButton();
+        btn_desmontarFS = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
+
+        crearArchivo.setText("Crear Archivo");
+        popMenuDir.add(crearArchivo);
+
+        crearDir.setText("Crear Directorio");
+        popMenuDir.add(crearDir);
+
+        eliminarDir.setText("Eliminar Directorio");
+        popMenuDir.add(eliminarDir);
+
+        abrirArchivo.setText("Abrir Archivo");
+        popMenuArchivo.add(abrirArchivo);
+
+        eliminarArchivo.setText("Eliminar Archivo");
+        popMenuArchivo.add(eliminarArchivo);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jButton1.setText("Algo");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+        arbolCliente.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                arbolClienteMouseClicked(evt);
             }
         });
-
         jScrollPane1.setViewportView(arbolCliente);
 
-        jButton2.setText("Cargar archivo");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        btn_cargarArchivo.setText("Cargar Directorios");
+        btn_cargarArchivo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                btn_cargarArchivoActionPerformed(evt);
             }
         });
 
-        textoArchivo.setColumns(20);
-        textoArchivo.setRows(5);
-        jScrollPane2.setViewportView(textoArchivo);
-
-        jButton3.setText("Mostrar Original");
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
+        btn_desmontarFS.setText("Desmontar FS");
+        btn_desmontarFS.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
+                btn_desmontarFSActionPerformed(evt);
             }
         });
 
-        jButton4.setText("Guardar Cambios");
-        jButton4.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton4ActionPerformed(evt);
-            }
-        });
-
-        clientName.setEditable(false);
-        clientName.setText("jTextField1");
+        jLabel1.setText("Cliente");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 169, Short.MAX_VALUE)
-                    .addComponent(clientName))
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane2)
-                .addContainerGap())
-            .addGroup(layout.createSequentialGroup()
-                .addGap(44, 44, 44)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(126, 126, 126))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(64, 64, 64)
+                        .addComponent(btn_desmontarFS, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(96, 96, 96)
+                        .addComponent(jLabel1))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(34, 34, 34)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(btn_cargarArchivo)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap(34, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(clientName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane2))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton2, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jButton3, javax.swing.GroupLayout.Alignment.TRAILING))
+                .addGap(10, 10, 10)
+                .addComponent(jLabel1)
+                .addGap(23, 23, 23)
+                .addComponent(btn_cargarArchivo)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(jButton4))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 217, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 30, Short.MAX_VALUE)
+                .addComponent(btn_desmontarFS)
                 .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        System.out.println("Este es el cliente");
-    }//GEN-LAST:event_jButton1ActionPerformed
+    private void btn_cargarArchivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_cargarArchivoActionPerformed
+        try {
+            DefaultTreeModel modelo = interfaz.cargarDirectorio();
+            arbolCliente.setModel(modelo);
+        } catch (Exception e) {
+        }
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-     
-    }//GEN-LAST:event_jButton2ActionPerformed
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+    }//GEN-LAST:event_btn_cargarArchivoActionPerformed
 
-    }//GEN-LAST:event_jButton3ActionPerformed
+    private void btn_desmontarFSActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_desmontarFSActionPerformed
 
-    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+    }//GEN-LAST:event_btn_desmontarFSActionPerformed
 
-    }//GEN-LAST:event_jButton4ActionPerformed
+    private void arbolClienteMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_arbolClienteMouseClicked
+        if (evt.isMetaDown()){
+                 
+            }
+    }//GEN-LAST:event_arbolClienteMouseClicked
+    
+    public void cargarArchivo (){
+        try {
+            DefaultTreeModel modelo = interfaz.cargarDirectorio();
+            arbolCliente.setModel(modelo);
+        } catch (Exception e) {
+        }
 
+    }
+    
     public static void main(String args[]) {
+
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
@@ -179,7 +187,7 @@ public class Cliente extends javax.swing.JFrame {
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
-             public void run() {
+            public void run() {
                 try {
                     new Cliente().setVisible(true);
                 } catch (RemoteException ex) {
@@ -187,19 +195,25 @@ public class Cliente extends javax.swing.JFrame {
                 } catch (NotBoundException ex) {
                     Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
                 }
+                
+
             }
+
         });
     }
-    
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenuItem abrirArchivo;
     private javax.swing.JTree arbolCliente;
-    private javax.swing.JTextField clientName;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
+    private javax.swing.JButton btn_cargarArchivo;
+    private javax.swing.JButton btn_desmontarFS;
+    private javax.swing.JMenuItem crearArchivo;
+    private javax.swing.JMenuItem crearDir;
+    private javax.swing.JMenuItem eliminarArchivo;
+    private javax.swing.JMenuItem eliminarDir;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTextArea textoArchivo;
+    private javax.swing.JPopupMenu popMenuArchivo;
+    private javax.swing.JPopupMenu popMenuDir;
     // End of variables declaration//GEN-END:variables
 }
