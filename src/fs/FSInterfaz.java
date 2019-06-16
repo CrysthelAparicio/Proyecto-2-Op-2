@@ -11,7 +11,7 @@ public interface FSInterfaz extends Remote {
 
     DefaultTreeModel cargarDirectorio() throws RemoteException;
 
-    void crearArchivo(File archivoaCrear) throws RemoteException;
+    void crearArchivo(File archivoaCrear, boolean esArchivo) throws RemoteException;
     
     void editarArchivo(File editandoArchivo, String texto) throws RemoteException;
     

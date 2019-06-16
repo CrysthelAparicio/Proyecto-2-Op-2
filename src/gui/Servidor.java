@@ -40,15 +40,18 @@ public class Servidor extends javax.swing.JFrame {
             }
 
             @Override
-            public void crearArchivo(File archivoaCrear) throws RemoteException {
+            public void crearArchivo(File archivoaCrear, boolean esArchivo) throws RemoteException {
+                System.out.println(archivoaCrear.getAbsoluteFile());
                 // crear un archivo vacio
                 // debe recibir la ruta completa, ej:
                 // C:\\Users\\Nohelia\\RootServer\\341234\\12442\\creame\\laptops.txt
                 File fileRes = pathRootServer(archivoaCrear);
                 
-                if (archivoaCrear.isFile()) {
+                if (esArchivo) {
+                    System.out.println("es carpeta");
                     fileRes.getParentFile().mkdirs();
-                } else if (archivoaCrear.isDirectory()) {
+                } else {
+                    System.out.println("es carpeta");
                     fileRes.mkdirs();
                 }
             }

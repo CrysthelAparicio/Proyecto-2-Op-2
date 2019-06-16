@@ -207,7 +207,7 @@ public class Cliente extends javax.swing.JFrame {
         File dir = new File(path);
         
         try {
-            interfaz.crearArchivo(dir);    
+            interfaz.crearArchivo(dir, false);    
         } catch (Exception e) {
         }
         cargarArchivo();
