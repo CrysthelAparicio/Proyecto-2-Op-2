@@ -13,11 +13,13 @@ import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import fs.*;
+import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeSelectionModel;
 
 public class Cliente extends javax.swing.JFrame {
 
-    private static final String IP = "192.168.0.107"; // Puedes cambiar a localhost
+    private static final String IP = "127.0.0.1"; // Puedes cambiar a localhost
     private static final int PUERTO = 1100; //Si cambias aquí el puerto, recuerda cambiarlo en el servidor
 
     public Registry registry;
@@ -43,10 +45,10 @@ public class Cliente extends javax.swing.JFrame {
     private void initComponents() {
 
         popMenuDir = new javax.swing.JPopupMenu();
-        crearArchivo = new javax.swing.JMenuItem();
         crearDir = new javax.swing.JMenuItem();
         eliminarDir = new javax.swing.JMenuItem();
         popMenuArchivo = new javax.swing.JPopupMenu();
+        crearArchivo = new javax.swing.JMenuItem();
         abrirArchivo = new javax.swing.JMenuItem();
         eliminarArchivo = new javax.swing.JMenuItem();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -55,14 +57,19 @@ public class Cliente extends javax.swing.JFrame {
         btn_desmontarFS = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
 
-        crearArchivo.setText("Crear Archivo");
-        popMenuDir.add(crearArchivo);
-
         crearDir.setText("Crear Directorio");
+        crearDir.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                crearDirMouseClicked(evt);
+            }
+        });
         popMenuDir.add(crearDir);
 
         eliminarDir.setText("Eliminar Directorio");
         popMenuDir.add(eliminarDir);
+
+        crearArchivo.setText("Crear Archivo");
+        popMenuArchivo.add(crearArchivo);
 
         abrirArchivo.setText("Abrir Archivo");
         popMenuArchivo.add(abrirArchivo);
@@ -146,12 +153,38 @@ public class Cliente extends javax.swing.JFrame {
     }//GEN-LAST:event_btn_desmontarFSActionPerformed
 
     private void arbolClienteMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_arbolClienteMouseClicked
-        if (evt.isMetaDown()){
-                 
+        arbolCliente.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+        if (evt.isMetaDown()) {
+            int row = arbolCliente.getSelectionCount();
+            if (row >= 0) {
+                DefaultTreeModel modelo = (DefaultTreeModel) arbolCliente.getModel();
+                DefaultMutableTreeNode node = (DefaultMutableTreeNode) arbolCliente.getLastSelectedPathComponent();
+                Object object = arbolCliente.getLastSelectedPathComponent();
+                if (node == null) //Nothing is selected.     
+                {
+
+                } else {
+                    if (object instanceof DefaultMutableTreeNode) {
+                        Object userObject = ((DefaultMutableTreeNode) object).getUserObject();
+                        if (userObject.toString().contains(".txt")) {
+
+                            popMenuDir.show(evt.getComponent(), evt.getX(), evt.getY());
+                        } else {
+                            popMenuArchivo.show(evt.getComponent(), evt.getX(), evt.getY());
+                        }
+                    }
+                }
             }
+        }
     }//GEN-LAST:event_arbolClienteMouseClicked
-    
-    public void cargarArchivo (){
+
+    private void crearDirMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_crearDirMouseClicked
+        // TODO add your handling code here:
+
+
+    }//GEN-LAST:event_crearDirMouseClicked
+
+    public void cargarArchivo() {
         try {
             DefaultTreeModel modelo = interfaz.cargarDirectorio();
             arbolCliente.setModel(modelo);
@@ -159,7 +192,7 @@ public class Cliente extends javax.swing.JFrame {
         }
 
     }
-    
+
     public static void main(String args[]) {
 
         /* Set the Nimbus look and feel */
@@ -195,12 +228,12 @@ public class Cliente extends javax.swing.JFrame {
                 } catch (NotBoundException ex) {
                     Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                
 
             }
 
         });
     }
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem abrirArchivo;

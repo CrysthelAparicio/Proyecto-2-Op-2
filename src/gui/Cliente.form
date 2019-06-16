@@ -8,15 +8,13 @@
         <Property name="useNullLayout" type="boolean" value="true"/>
       </Layout>
       <SubComponents>
-        <MenuItem class="javax.swing.JMenuItem" name="crearArchivo">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Crear Archivo"/>
-          </Properties>
-        </MenuItem>
         <MenuItem class="javax.swing.JMenuItem" name="crearDir">
           <Properties>
             <Property name="text" type="java.lang.String" value="Crear Directorio"/>
           </Properties>
+          <Events>
+            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="crearDirMouseClicked"/>
+          </Events>
         </MenuItem>
         <MenuItem class="javax.swing.JMenuItem" name="eliminarDir">
           <Properties>
@@ -31,6 +29,11 @@
         <Property name="useNullLayout" type="boolean" value="true"/>
       </Layout>
       <SubComponents>
+        <MenuItem class="javax.swing.JMenuItem" name="crearArchivo">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Crear Archivo"/>
+          </Properties>
+        </MenuItem>
         <MenuItem class="javax.swing.JMenuItem" name="abrirArchivo">
           <Properties>
             <Property name="text" type="java.lang.String" value="Abrir Archivo"/>
