@@ -1,9 +1,5 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package p2;
+package gui;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -16,31 +12,21 @@ import java.rmi.registry.Registry;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import fs.*;
 
-/**
- *
- * @author isaac
- */
 public class Cliente extends javax.swing.JFrame {
+    private static final String IP = "127.0.0.1"; // Puedes cambiar a localhost
+    private static final int PUERTO = 1100; //Si cambias aquí el puerto, recuerda cambiarlo en el servidor
 
-    /**
-     * Creates new form Cliente
-     */
+    public Registry registry;
+    public FSInterfaz interfaz;
+
     public Cliente() throws RemoteException, NotBoundException {
         initComponents();
-        Scanner entrada = new Scanner(System.in);
-        System.out.print("Ingrese un nombre para el cliente: ");
-        String nombre = entrada.next();
-        cliente = new Comunicacion(nombre);
-        clientName.setText(nombre);
-        Registry registry = LocateRegistry.getRegistry(4200);
-        server = (ComuFace)registry.lookup("proyecto");
-        if(server!=null){
-            System.out.println("Conectado");
-        }
-        server.nuevoCliente();
-        arbolCliente.setModel(server.getModel());
-        server.setClient(cliente);
+
+        registry = LocateRegistry.getRegistry(IP, PUERTO);
+        interfaz = (FSInterfaz) registry.lookup("Calculadora"); //Buscar en el registro...
+        // resultado = interfaz.dividir(numero1, numero2);
         
         this.setLocationRelativeTo(null);
     }
@@ -156,53 +142,17 @@ public class Cliente extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        if(arbolCliente.getSelectionPath()!= null){
-            //System.out.println(arbolCliente.getSelectionPath().toString());
-            String path = formatPathFromTree(arbolCliente.getSelectionPath().toString());
-            currentPath = path;
-            if(path.endsWith(".txt")){
-                System.out.println("Recuperar archivo...");
-                try {
-                    currentFile = server.requestFile(path);
-                    System.out.println("¡Recuperado exitoso!");
-                    //System.out.println(path);
-                    showContents(currentFile);
-                } catch (RemoteException ex) {
-                    Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (IOException ex) {
-                    Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }else{
-                System.out.println("OJO: ¡Lo que intenta recuperar es un directorio!");
-            }
-        }else{
-            System.out.println("OJO: ¡Seleccione un nodo primero!");
-        }
+     
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        System.out.println("Texto Original del Archivo:");
-        System.out.println(originalContent);
+
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        String content = textoArchivo.getText();
-        if(content.equals(originalContent)){
-            System.out.println(">>No se hicieron modificaciones, no es necesario guardar!");
-        }else{
-            System.out.println(">>Enviando solicitud para guardar...");
-            try {
-                server.saveFile(content,currentFile);
-                System.out.println(">>¡Guardado exitoso!");
-            } catch (RemoteException ex) {
-                Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
+
     }//GEN-LAST:event_jButton4ActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -241,31 +191,6 @@ public class Cliente extends javax.swing.JFrame {
         });
     }
     
-     public String formatPathFromTree(String path){
-        String retVal = "";
-        path = path.substring(0,path.length()-1);
-        String[] dirs = path.split(",");
-        for (int i = 0; i < dirs.length; i++) {
-            if(i == dirs.length-1){
-                retVal += dirs[i].substring(1);
-            }else{
-                retVal += dirs[i].substring(1) + "/";
-            }
-        }
-        return retVal;
-    }
-     
-     public void showContents(File file) throws FileNotFoundException, IOException{
-        //System.out.println(file.getPath());
-        BufferedReader br = new BufferedReader(new FileReader(file));
-        String linea = "";
-        while((linea = br.readLine())!= null){
-            originalContent += linea;
-            originalContent += "\n";
-        }
-        textoArchivo.setText(originalContent);  
-    }
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTree arbolCliente;
     private javax.swing.JTextField clientName;
@@ -277,9 +202,4 @@ public class Cliente extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTextArea textoArchivo;
     // End of variables declaration//GEN-END:variables
-    ComuFace server;
-    ComuFace cliente;
-    File currentFile;
-    String originalContent = "";
-    String currentPath = "";
 }
