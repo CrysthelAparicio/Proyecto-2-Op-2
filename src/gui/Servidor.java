@@ -23,20 +23,21 @@ public class Servidor extends javax.swing.JFrame {
 
     public Remote remote;
     public Registry registry;
-    
+
     public Servidor() throws RemoteException, AlreadyBoundException {
         initComponents();
-        
+
         remote = UnicastRemoteObject.exportObject(new FSInterfaz() {
             @Override
             public float dividir(float numero1, float numero2) throws RemoteException {
+                // TODO borrar
                 return numero1 / numero2;
             }
-            
+
             @Override
             public void desmontar() throws RemoteException {
             }
-            
+
             @Override
             public DefaultTreeModel cargarDirectorio() throws RemoteException {
                 DefaultMutableTreeNode root = new DefaultMutableTreeNode("RootServer");
@@ -46,6 +47,18 @@ public class Servidor extends javax.swing.JFrame {
 
             @Override
             public File crearArchivo(File archivoaCrear) throws RemoteException {
+                // crear un archivo vacio
+                // debe recibir la ruta completa, ej:
+                // C:\\Users\\Nohelia\\RootServer\\341234\\12442\\creame\\laptops.txt
+                File fileRes = pathRootServer(archivoaCrear);
+                
+                if (archivoaCrear.isFile()) {
+                    fileRes.getParentFile().mkdirs();
+                } else if (archivoaCrear.isDirectory()) {
+                    fileRes.mkdirs();
+                }
+                
+                // TODO no es necesario, hacer void
                 return new File("");
             }
 
@@ -56,15 +69,24 @@ public class Servidor extends javax.swing.JFrame {
 
             @Override
             public File eliminarArchivo(File archivoaEliminar) throws RemoteException {
+                // eliminar un archivo
+                // debe recibir la ruta completa, ej:
+                // C:\\Users\\Nohelia\\RootServer\\341234\\12442\\creame\\laptops.txt
+                File fileRes = pathRootServer(archivoaEliminar);
+
+                eliminarDirs(fileRes);
+                
+                // TODO no es necesario, hacer void
                 return new File("");
             }
 
             @Override
             public File eliminarDirectorio(File directorioaEliminar) throws RemoteException {
+                // TODO borrar
                 return new File("");
             }
         }, 0);
-        
+
         registry = LocateRegistry.createRegistry(PUERTO);
        	System.out.println("Servidor escuchando en el puerto " + String.valueOf(PUERTO));
         registry.bind("Calculadora", remote); // Registrar calculadora        
@@ -72,13 +94,39 @@ public class Servidor extends javax.swing.JFrame {
         DefaultMutableTreeNode root = new DefaultMutableTreeNode("RootServer");
         cargarArbol("./RootServer", root);
         arbolServidor.setModel(new DefaultTreeModel(root));
-                
+
         this.setLocationRelativeTo(null);
     }
-    
-    void dirWatcher() {
-    }
 
+    File pathRootServer(File archivo) {
+        // debe recibir la ruta completa, ej:
+        // C:\\Users\\Nohelia\\RootServer\\341234\\12442\\creame\\laptops.txt
+
+        String pathRes = archivo.getName();
+        File parent = archivo;
+
+        while (true) {
+            parent = parent.getParentFile();
+            if (parent.getName().equals("RootServer")) {
+                break;
+            }
+            pathRes = parent.getName() + "/" + pathRes;
+        }
+
+        pathRes = "./RootServer/" + pathRes;
+        return new File(pathRes);
+    }
+    
+    void eliminarDirs(File root) {
+        File[] allContents = root.listFiles();
+        if (allContents != null) {
+            for (File file : allContents) {
+                eliminarDirs(file);
+            }
+        }
+        root.delete();
+    }
+    
     void cargarArbol(String dir, DefaultMutableTreeNode node) {
         File root = new File(dir);
         File subdirfile;
