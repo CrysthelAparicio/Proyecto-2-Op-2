@@ -4,6 +4,7 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 import javax.swing.JTree;
 import java.io.File;
+import javax.swing.tree.DefaultTreeModel;
 
 public interface FSInterfaz extends Remote {
 
@@ -11,7 +12,7 @@ public interface FSInterfaz extends Remote {
 
     void desmontar() throws RemoteException;
 
-    JTree cargarDirectorio() throws RemoteException;
+    DefaultTreeModel cargarDirectorio() throws RemoteException;
 
     File crearArchivo(File archivoaCrear) throws RemoteException;
     

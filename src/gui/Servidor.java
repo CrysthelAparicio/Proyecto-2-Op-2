@@ -4,6 +4,7 @@ import fs.FSInterfaz;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.WatchService;
 import java.rmi.AlreadyBoundException;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
@@ -22,6 +23,7 @@ public class Servidor extends javax.swing.JFrame {
 
     public Remote remote;
     public Registry registry;
+    public WatchService watcher;
     
     public Servidor() throws RemoteException, AlreadyBoundException {
         initComponents();
@@ -37,8 +39,10 @@ public class Servidor extends javax.swing.JFrame {
             }
             
             @Override
-            public JTree cargarDirectorio() throws RemoteException {
-                return new JTree();
+            public DefaultTreeModel cargarDirectorio() throws RemoteException {
+                DefaultMutableTreeNode root = new DefaultMutableTreeNode("RootServer");
+                cargarArbol("./RootServer", root);
+                return new DefaultTreeModel(root);
             }
 
             @Override
@@ -69,6 +73,8 @@ public class Servidor extends javax.swing.JFrame {
         DefaultMutableTreeNode root = new DefaultMutableTreeNode("RootServer");
         cargarArbol("./RootServer", root);
         arbolServidor.setModel(new DefaultTreeModel(root));
+        
+//        watcher = new WatchService();
         
         this.setLocationRelativeTo(null);
     }
