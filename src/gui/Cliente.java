@@ -168,9 +168,9 @@ public class Cliente extends javax.swing.JFrame {
                         Object userObject = ((DefaultMutableTreeNode) object).getUserObject();
                         if (userObject.toString().contains(".txt")) {
 
-                            popMenuDir.show(evt.getComponent(), evt.getX(), evt.getY());
-                        } else {
                             popMenuArchivo.show(evt.getComponent(), evt.getX(), evt.getY());
+                        } else {
+                            popMenuDir.show(evt.getComponent(), evt.getX(), evt.getY());
                         }
                     }
                 }
