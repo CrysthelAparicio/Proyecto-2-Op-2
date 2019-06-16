@@ -24,3 +24,6 @@ hs_err_pid*
 /P2/nbproject/private/
 /nbproject/private/
 /build/
+
+# RootServer
+/RootServer
