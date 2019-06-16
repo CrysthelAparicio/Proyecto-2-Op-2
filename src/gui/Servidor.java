@@ -29,12 +29,6 @@ public class Servidor extends javax.swing.JFrame {
 
         remote = UnicastRemoteObject.exportObject(new FSInterfaz() {
             @Override
-            public float dividir(float numero1, float numero2) throws RemoteException {
-                // TODO borrar
-                return numero1 / numero2;
-            }
-
-            @Override
             public void desmontar() throws RemoteException {
             }
 
@@ -46,7 +40,7 @@ public class Servidor extends javax.swing.JFrame {
             }
 
             @Override
-            public File crearArchivo(File archivoaCrear) throws RemoteException {
+            public void crearArchivo(File archivoaCrear) throws RemoteException {
                 // crear un archivo vacio
                 // debe recibir la ruta completa, ej:
                 // C:\\Users\\Nohelia\\RootServer\\341234\\12442\\creame\\laptops.txt
@@ -57,33 +51,20 @@ public class Servidor extends javax.swing.JFrame {
                 } else if (archivoaCrear.isDirectory()) {
                     fileRes.mkdirs();
                 }
-                
-                // TODO no es necesario, hacer void
-                return new File("");
             }
 
             @Override
-            public File editarArchivo(File editandoArchivo) throws RemoteException {
-                return new File("");
+            public void editarArchivo(File editandoArchivo, String texto) throws RemoteException {
             }
 
             @Override
-            public File eliminarArchivo(File archivoaEliminar) throws RemoteException {
+            public void eliminarArchivo(File archivoaEliminar) throws RemoteException {
                 // eliminar un archivo
                 // debe recibir la ruta completa, ej:
                 // C:\\Users\\Nohelia\\RootServer\\341234\\12442\\creame\\laptops.txt
                 File fileRes = pathRootServer(archivoaEliminar);
 
                 eliminarDirs(fileRes);
-                
-                // TODO no es necesario, hacer void
-                return new File("");
-            }
-
-            @Override
-            public File eliminarDirectorio(File directorioaEliminar) throws RemoteException {
-                // TODO borrar
-                return new File("");
             }
         }, 0);
 
