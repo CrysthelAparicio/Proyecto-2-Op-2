@@ -2,6 +2,8 @@ package gui;
 
 import fs.FSInterfaz;
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.rmi.AlreadyBoundException;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
@@ -16,7 +18,7 @@ import javax.swing.tree.DefaultTreeModel;
 
 public class Servidor extends javax.swing.JFrame {
 
-    private static final int PUERTO = 1100; //Si cambias aquí el puerto, recuerda cambiarlo en el cliente
+    private static final int PUERTO = 1100; // Si cambias aquí el puerto, recuerda cambiarlo en el cliente
 
     public Remote remote;
     public Registry registry;
@@ -35,9 +37,31 @@ public class Servidor extends javax.swing.JFrame {
        	System.out.println("Servidor escuchando en el puerto " + String.valueOf(PUERTO));
         registry.bind("Calculadora", remote); // Registrar calculadora        
 
+        DefaultMutableTreeNode root = new DefaultMutableTreeNode("RootServer");
+        cargarArbol("./RootServer", root);
+        arbolServidor.setModel(new DefaultTreeModel(root));
+        
         this.setLocationRelativeTo(null);
     }
 
+    void cargarArbol(String dir, DefaultMutableTreeNode node) {
+        File root = new File(dir);
+        File subdirfile;
+        File[] list = root.listFiles();
+        String filename;
+        for (File file : list) {
+            filename = file.getName();
+            if (file.isFile()) {
+                node.add(new DefaultMutableTreeNode(filename));
+            } else if (file.isDirectory()) {
+                DefaultMutableTreeNode subdir = new DefaultMutableTreeNode(filename);
+                subdirfile = new File(root.getAbsolutePath(),  filename);
+                cargarArbol(subdirfile.getAbsolutePath(), subdir);
+                node.add(subdir);
+            }
+        }
+    }
+    
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
