@@ -9,7 +9,6 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import fs.*;
@@ -24,17 +23,17 @@ public class Cliente extends javax.swing.JFrame {
     private static final int PUERTO = 1100; //Si cambias aquí el puerto, recuerda cambiarlo en el servidor
 
     public Registry registry;
-    public FSInterfaz interfaz;
-    public Test myClient;
-    
+    public FSInterfaz server;
+    public FSInterfaz cliente;
     
     public Cliente() throws RemoteException, NotBoundException {
         initComponents();
 
-        myClient = new Test("ayyy");
+        cliente = new Middleware();
         registry = LocateRegistry.getRegistry(IP, PUERTO);
-        interfaz = (FSInterfaz) registry.lookup("Calculadora"); //Buscar en el registro...
-        interfaz.addClient(myClient);
+        server = (FSInterfaz) registry.lookup("fs"); // Buscar en el registro...
+        server.agregarCliente(cliente);
+        
         // resultado = interfaz.dividir(numero1, numero2);
 
         this.setLocationRelativeTo(null);
@@ -152,22 +151,14 @@ public class Cliente extends javax.swing.JFrame {
 
     private void btn_cargarArchivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_cargarArchivoActionPerformed
         try {
-            DefaultTreeModel modelo = interfaz.cargarDirectorio();
+            DefaultTreeModel modelo = server.cargarDirectorio();
             arbolCliente.setModel(modelo);
         } catch (Exception e) {
-            System.out.println("problem!!!!!!!!!!");
             e.printStackTrace();
         }
-        System.out.println("did it");
-
-
     }//GEN-LAST:event_btn_cargarArchivoActionPerformed
 
     private void btn_desmontarFSActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_desmontarFSActionPerformed
-        try {
-            interfaz.broadcast();
-        } catch (RemoteException e) {
-        }
     }//GEN-LAST:event_btn_desmontarFSActionPerformed
 
     private void arbolClienteMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_arbolClienteMouseClicked
@@ -214,7 +205,7 @@ public class Cliente extends javax.swing.JFrame {
         File dir = new File(path);
         
         try {
-            interfaz.crearArchivo(dir, false);    
+            server.crearArchivo(dir, false);    
         } catch (Exception e) {
         }
         cargarArchivo();
@@ -223,7 +214,7 @@ public class Cliente extends javax.swing.JFrame {
 
     public void cargarArchivo() {
         try {
-            DefaultTreeModel modelo = interfaz.cargarDirectorio();
+            DefaultTreeModel modelo = server.cargarDirectorio();
             arbolCliente.setModel(modelo);
         } catch (Exception e) {
         }
