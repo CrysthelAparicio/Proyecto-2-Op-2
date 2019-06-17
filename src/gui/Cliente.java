@@ -25,12 +25,16 @@ public class Cliente extends javax.swing.JFrame {
 
     public Registry registry;
     public FSInterfaz interfaz;
-
+    public Test myClient;
+    
+    
     public Cliente() throws RemoteException, NotBoundException {
         initComponents();
 
+        myClient = new Test("ayyy");
         registry = LocateRegistry.getRegistry(IP, PUERTO);
         interfaz = (FSInterfaz) registry.lookup("Calculadora"); //Buscar en el registro...
+        interfaz.addClient(myClient);
         // resultado = interfaz.dividir(numero1, numero2);
 
         this.setLocationRelativeTo(null);
@@ -160,7 +164,10 @@ public class Cliente extends javax.swing.JFrame {
     }//GEN-LAST:event_btn_cargarArchivoActionPerformed
 
     private void btn_desmontarFSActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_desmontarFSActionPerformed
-
+        try {
+            interfaz.broadcast();
+        } catch (RemoteException e) {
+        }
     }//GEN-LAST:event_btn_desmontarFSActionPerformed
 
     private void arbolClienteMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_arbolClienteMouseClicked

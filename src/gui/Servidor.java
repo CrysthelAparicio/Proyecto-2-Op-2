@@ -1,6 +1,7 @@
 package gui;
 
 import fs.FSInterfaz;
+import fs.Test;
 import fs.WatchDir;
 import java.io.File;
 import java.io.IOException;
@@ -12,6 +13,7 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -23,10 +25,12 @@ public class Servidor extends javax.swing.JFrame {
 
     public Remote remote;
     public Registry registry;
-
+    public Vector<Test> clients;
+    
     public Servidor() throws RemoteException, AlreadyBoundException {
         initComponents();
 
+        clients = new Vector();
         remote = UnicastRemoteObject.exportObject(new FSInterfaz() {
             @Override
             public void desmontar() throws RemoteException {
@@ -41,17 +45,14 @@ public class Servidor extends javax.swing.JFrame {
 
             @Override
             public void crearArchivo(File archivoaCrear, boolean esArchivo) throws RemoteException {
-                System.out.println(archivoaCrear.getAbsoluteFile());
                 // crear un archivo vacio
                 // debe recibir la ruta completa, ej:
                 // C:\\Users\\Nohelia\\RootServer\\341234\\12442\\creame\\laptops.txt
                 File fileRes = pathRootServer(archivoaCrear);
                 
                 if (esArchivo) {
-                    System.out.println("es carpeta");
                     fileRes.getParentFile().mkdirs();
                 } else {
-                    System.out.println("es carpeta");
                     fileRes.mkdirs();
                 }
             }
@@ -68,6 +69,18 @@ public class Servidor extends javax.swing.JFrame {
                 File fileRes = pathRootServer(archivoaEliminar);
 
                 eliminarDirs(fileRes);
+            }
+            
+            @Override
+            public void addClient(Test client) {
+                clients.add(client);
+            }
+
+            @Override
+            public void broadcast() {
+                for (Test client : clients) {
+                    client.hello();
+                }
             }
         }, 0);
 
