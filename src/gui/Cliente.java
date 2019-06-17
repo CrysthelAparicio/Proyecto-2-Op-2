@@ -19,7 +19,7 @@ import javax.swing.tree.TreeSelectionModel;
 
 public class Cliente extends javax.swing.JFrame {
 
-    private static final String IP = "192.168.0.103"; // Puedes cambiar a localhost
+    private static final String IP = "127.0.0.1"; // Puedes cambiar a localhost
     private static final int PUERTO = 1100; //Si cambias aquí el puerto, recuerda cambiarlo en el servidor
 
     public Registry registry;

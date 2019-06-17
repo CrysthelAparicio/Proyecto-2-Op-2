@@ -49,7 +49,7 @@ public class Servidor extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jButton1.setText("Algo");
+        jButton1.setText("Broadcast");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
@@ -84,7 +84,9 @@ public class Servidor extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         try {
-            server.broadcast();
+            if (server.getClientes().size() > 0) {
+                server.broadcast();
+            }
         } catch (RemoteException e) {
             System.out.println(e);
         }

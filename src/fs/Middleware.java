@@ -10,10 +10,14 @@ import javax.swing.tree.DefaultTreeModel;
 public class Middleware extends UnicastRemoteObject implements FSInterfaz {
     Vector<FSInterfaz> clientes;
 
-    public Middleware() {
+    public Middleware() throws RemoteException {
         clientes = new Vector<>();
     }
 
+    public Vector<FSInterfaz> getClientes() {
+        return clientes;
+    }
+    
     @Override
     public void desmontar() throws RemoteException {
     }
