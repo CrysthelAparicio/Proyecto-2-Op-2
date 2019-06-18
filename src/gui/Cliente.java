@@ -20,7 +20,7 @@ import javax.swing.tree.TreeSelectionModel;
 
 public class Cliente extends javax.swing.JFrame {
 
-    private static final String IP = "192.168.0.103"; // Puedes cambiar a localhost
+    private static final String IP = "127.0.0.1"; // Puedes cambiar a localhost
     private static final int PUERTO = 1100; //Si cambias aquí el puerto, recuerda cambiarlo en el servidor
 
     public Registry registry;
@@ -72,6 +72,11 @@ public class Cliente extends javax.swing.JFrame {
         popMenuDir.add(crearDir);
 
         eliminarDir.setText("Eliminar Directorio");
+        eliminarDir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                eliminarDirActionPerformed(evt);
+            }
+        });
         popMenuDir.add(eliminarDir);
 
         crearArchivo.setText("Crear Archivo");
@@ -81,6 +86,11 @@ public class Cliente extends javax.swing.JFrame {
         popMenuArchivo.add(abrirArchivo);
 
         eliminarArchivo.setText("Eliminar Archivo");
+        eliminarArchivo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                eliminarArchivoActionPerformed(evt);
+            }
+        });
         popMenuArchivo.add(eliminarArchivo);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -160,16 +170,38 @@ public class Cliente extends javax.swing.JFrame {
     }//GEN-LAST:event_btn_cargarArchivoActionPerformed
 
     private void btn_desmontarFSActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_desmontarFSActionPerformed
-
+        try {
+            interfaz.desmontar();
+        } catch (Exception e) {
+        }
     }//GEN-LAST:event_btn_desmontarFSActionPerformed
 
     private void arbolClienteMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_arbolClienteMouseClicked
         arbolCliente.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         if (evt.isMetaDown()) {
+            int row = arbolCliente.getClosestRowForLocation(evt.getX(), evt.getY());
+            arbolCliente.setSelectionRow(row);
+            Object v1 = arbolCliente.getSelectionPath().getLastPathComponent();
+            nodo_seleccionado = (DefaultMutableTreeNode) v1;
+            if (nodo_seleccionado.getUserObject() instanceof File) {
+                file_seleccionado = (File) nodo_seleccionado.getUserObject();
+                if (file_seleccionado.isDirectory()) {
+                    popMenuDir.show(evt.getComponent(), evt.getX(), evt.getY());
+                }else{
+                    popMenuArchivo.show(evt.getComponent(), evt.getX(), evt.getY());
+                }
+            }
+
+        }
+        /*
+        if (evt.isMetaDown()) {
             int row = arbolCliente.getSelectionCount();
             if (row >= 0) {
+                
+                
                 DefaultTreeModel modelo = (DefaultTreeModel) arbolCliente.getModel();
                 DefaultMutableTreeNode node = (DefaultMutableTreeNode) arbolCliente.getLastSelectedPathComponent();
+                System.out.println(arbolCliente.getLastSelectedPathComponent().getClass());
                 Object object = arbolCliente.getLastSelectedPathComponent();
                 if (node == null) //Nothing is selected.     
                 {
@@ -181,12 +213,17 @@ public class Cliente extends javax.swing.JFrame {
 
                             popMenuArchivo.show(evt.getComponent(), evt.getX(), evt.getY());
                         } else {
-                            popMenuDir.show(evt.getComponent(), evt.getX(), evt.getY());
+                            if (node.isRoot()) {
+                                
+                            }else{
+                                popMenuDir.show(evt.getComponent(), evt.getX(), evt.getY());
+                            }
+                            
                         }
                     }
                 }
             }
-        }
+        }*/
     }//GEN-LAST:event_arbolClienteMouseClicked
 
     private void crearDirMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_crearDirMouseClicked
@@ -213,6 +250,38 @@ public class Cliente extends javax.swing.JFrame {
         cargarArchivo();
         
     }//GEN-LAST:event_crearDirActionPerformed
+
+    private void eliminarDirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_eliminarDirActionPerformed
+        DefaultTreeModel modelo = (DefaultTreeModel) arbolCliente.getModel();
+        DefaultMutableTreeNode node = (DefaultMutableTreeNode) arbolCliente.getLastSelectedPathComponent();
+        System.out.println(node);
+        String path = pathArchivo();
+        path = path.concat("/");
+        System.out.println(path);
+        File dir = new File(path);
+        
+        try {
+            interfaz.eliminarArchivo(dir);    
+        } catch (Exception e) {
+        }
+        cargarArchivo();
+    }//GEN-LAST:event_eliminarDirActionPerformed
+
+    private void eliminarArchivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_eliminarArchivoActionPerformed
+        DefaultTreeModel modelo = (DefaultTreeModel) arbolCliente.getModel();
+        DefaultMutableTreeNode node = (DefaultMutableTreeNode) arbolCliente.getLastSelectedPathComponent();
+        System.out.println(node);
+        String path = pathArchivo();
+        //path = path.concat("/");
+        System.out.println(path);
+        File dir = new File(path);
+        
+        try {
+            interfaz.eliminarArchivo(dir);    
+        } catch (Exception e) {
+        }
+        cargarArchivo();
+    }//GEN-LAST:event_eliminarArchivoActionPerformed
 
     public void cargarArchivo() {
         try {
@@ -297,4 +366,6 @@ public class Cliente extends javax.swing.JFrame {
     private javax.swing.JPopupMenu popMenuArchivo;
     private javax.swing.JPopupMenu popMenuDir;
     // End of variables declaration//GEN-END:variables
+    DefaultMutableTreeNode nodo_seleccionado;
+    File file_seleccionado;
 }
