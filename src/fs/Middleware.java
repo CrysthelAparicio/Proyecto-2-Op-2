@@ -111,9 +111,9 @@ public class Middleware extends UnicastRemoteObject implements FSInterfaz {
         for (File file : list) {
             filename = file.getName();
             if (file.isFile()) {
-                node.add(new DefaultMutableTreeNode(filename));
+                node.add(new DefaultMutableTreeNode(file));
             } else if (file.isDirectory()) {
-                DefaultMutableTreeNode subdir = new DefaultMutableTreeNode(filename);
+                DefaultMutableTreeNode subdir = new DefaultMutableTreeNode(file);
                 subdirfile = new File(root.getAbsolutePath(),  filename);
                 cargarArbol(subdirfile.getAbsolutePath(), subdir);
                 node.add(subdir);

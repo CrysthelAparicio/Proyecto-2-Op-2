@@ -68,23 +68,6 @@ public class Servidor extends javax.swing.JFrame {
         root.delete();
     }
     
-    void cargarArbol(String dir, DefaultMutableTreeNode node) {
-        File root = new File(dir);
-        File subdirfile;
-        File[] list = root.listFiles();
-        String filename;
-        for (File file : list) {
-            filename = file.getName();
-            if (file.isFile()) {
-                node.add(new DefaultMutableTreeNode(file));
-            } else if (file.isDirectory()) {
-                DefaultMutableTreeNode subdir = new DefaultMutableTreeNode(file);
-                subdirfile = new File(root.getAbsolutePath(),  filename);
-                cargarArbol(subdirfile.getAbsolutePath(), subdir);
-                node.add(subdir);
-            }
-        }
-    }
     
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
