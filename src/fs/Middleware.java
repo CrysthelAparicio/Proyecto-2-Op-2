@@ -1,6 +1,9 @@
 package fs;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.Vector;
@@ -108,16 +111,31 @@ public class Middleware extends UnicastRemoteObject implements FSInterfaz {
         File subdirfile;
         File[] list = root.listFiles();
         String filename;
+        FileConText res;
+        
         for (File file : list) {
             filename = file.getName();
             if (file.isFile()) {
-                node.add(new DefaultMutableTreeNode(file));
+                String texto = readFileAsString(file.getAbsolutePath());
+                res = new FileConText(file, texto);
+                node.add(new DefaultMutableTreeNode(res));
             } else if (file.isDirectory()) {
-                DefaultMutableTreeNode subdir = new DefaultMutableTreeNode(file);
+                res = new FileConText(file, "");
+                DefaultMutableTreeNode subdir = new DefaultMutableTreeNode(res);
                 subdirfile = new File(root.getAbsolutePath(),  filename);
                 cargarArbol(subdirfile.getAbsolutePath(), subdir);
                 node.add(subdir);
             }
         }
     }
+    
+    public static String readFileAsString(String fileName) { 
+        String data = ""; 
+        try {
+            data = new String(Files.readAllBytes(Paths.get(fileName))); 
+        } catch (IOException e) {
+            System.out.println(e);
+        }
+        return data; 
+    } 
 }

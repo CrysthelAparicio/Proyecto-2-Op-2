@@ -183,8 +183,9 @@ public class Cliente extends javax.swing.JFrame {
             arbolCliente.setSelectionRow(row);
             Object v1 = arbolCliente.getSelectionPath().getLastPathComponent();
             nodo_seleccionado = (DefaultMutableTreeNode) v1;
-            if (nodo_seleccionado.getUserObject() instanceof File) {
-                file_seleccionado = (File) nodo_seleccionado.getUserObject();
+            if (nodo_seleccionado.getUserObject() instanceof FileConText) {
+                file_seleccionado = ((FileConText) nodo_seleccionado.getUserObject()).getFile();
+                System.out.println(file_seleccionado);
                 if (file_seleccionado.isDirectory()) {
                     popMenuDir.show(evt.getComponent(), evt.getX(), evt.getY());
                 }else{
