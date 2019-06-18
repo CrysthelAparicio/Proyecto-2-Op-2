@@ -39,7 +39,7 @@ public class Middleware extends UnicastRemoteObject implements FSInterfaz {
     
     @Override
     public DefaultTreeModel cargarDirectorio() throws RemoteException {
-        DefaultMutableTreeNode root = new DefaultMutableTreeNode("RootServer");
+        DefaultMutableTreeNode root = new DefaultMutableTreeNode(new FileConText((new File("./RootServer")),""));
         cargarArbol("./RootServer", root);
         return new DefaultTreeModel(root);
     }

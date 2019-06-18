@@ -25,7 +25,7 @@ public class Cliente extends javax.swing.JFrame {
     public Registry registry;
     public FSInterfaz server;
     public FSInterfaz cliente;
-    
+
     public Cliente() throws RemoteException, NotBoundException {
         initComponents();
 
@@ -33,9 +33,11 @@ public class Cliente extends javax.swing.JFrame {
         registry = LocateRegistry.getRegistry(IP, PUERTO);
         server = (FSInterfaz) registry.lookup("fs"); // Buscar en el registro...
         server.agregarCliente(cliente);
-        
-        // resultado = interfaz.dividir(numero1, numero2);
+        cargarArchivo();
+        ta_archivo.setVisible(false);
+        btn_guardar.setVisible(false);
 
+        // resultado = interfaz.dividir(numero1, numero2);
         this.setLocationRelativeTo(null);
     }
 
@@ -49,17 +51,32 @@ public class Cliente extends javax.swing.JFrame {
     private void initComponents() {
 
         popMenuDir = new javax.swing.JPopupMenu();
+        crearArchivo = new javax.swing.JMenuItem();
         crearDir = new javax.swing.JMenuItem();
         eliminarDir = new javax.swing.JMenuItem();
         popMenuArchivo = new javax.swing.JPopupMenu();
-        crearArchivo = new javax.swing.JMenuItem();
         abrirArchivo = new javax.swing.JMenuItem();
         eliminarArchivo = new javax.swing.JMenuItem();
+        popMenuRoot = new javax.swing.JPopupMenu();
+        crearArchivo1 = new javax.swing.JMenuItem();
+        crearDir1 = new javax.swing.JMenuItem();
+        eliminarDir1 = new javax.swing.JMenuItem();
         jScrollPane1 = new javax.swing.JScrollPane();
         arbolCliente = new javax.swing.JTree();
         btn_cargarArchivo = new javax.swing.JButton();
         btn_desmontarFS = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        ta_archivo = new javax.swing.JTextArea();
+        btn_guardar = new javax.swing.JButton();
+
+        crearArchivo.setText("Crear Archivo");
+        crearArchivo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                crearArchivoActionPerformed(evt);
+            }
+        });
+        popMenuDir.add(crearArchivo);
 
         crearDir.setText("Crear Directorio");
         crearDir.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -82,10 +99,12 @@ public class Cliente extends javax.swing.JFrame {
         });
         popMenuDir.add(eliminarDir);
 
-        crearArchivo.setText("Crear Archivo");
-        popMenuArchivo.add(crearArchivo);
-
         abrirArchivo.setText("Abrir Archivo");
+        abrirArchivo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                abrirArchivoActionPerformed(evt);
+            }
+        });
         popMenuArchivo.add(abrirArchivo);
 
         eliminarArchivo.setText("Eliminar Archivo");
@@ -95,6 +114,38 @@ public class Cliente extends javax.swing.JFrame {
             }
         });
         popMenuArchivo.add(eliminarArchivo);
+
+        popMenuRoot.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        popMenuRoot.setName(""); // NOI18N
+
+        crearArchivo1.setText("Crear Archivo");
+        crearArchivo1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                crearArchivo1ActionPerformed(evt);
+            }
+        });
+        popMenuRoot.add(crearArchivo1);
+
+        crearDir1.setText("Crear Directorio");
+        crearDir1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                crearDir1MouseClicked(evt);
+            }
+        });
+        crearDir1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                crearDir1ActionPerformed(evt);
+            }
+        });
+        popMenuRoot.add(crearDir1);
+
+        eliminarDir1.setText("Eliminar Directorio");
+        eliminarDir1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                eliminarDir1ActionPerformed(evt);
+            }
+        });
+        popMenuRoot.add(eliminarDir1);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -123,6 +174,17 @@ public class Cliente extends javax.swing.JFrame {
 
         jLabel1.setText("Cliente");
 
+        ta_archivo.setColumns(20);
+        ta_archivo.setRows(5);
+        jScrollPane2.setViewportView(ta_archivo);
+
+        btn_guardar.setText("Guardar");
+        btn_guardar.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btn_guardarMouseClicked(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -130,17 +192,22 @@ public class Cliente extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(64, 64, 64)
-                        .addComponent(btn_desmontarFS, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
                         .addGap(96, 96, 96)
                         .addComponent(jLabel1))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(34, 34, 34)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(btn_cargarArchivo)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(34, Short.MAX_VALUE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(btn_desmontarFS, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(383, 383, 383)
+                                .addComponent(btn_guardar))
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(btn_cargarArchivo)
+                                .addGroup(layout.createSequentialGroup()
+                                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 224, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGap(45, 45, 45)
+                                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 332, javax.swing.GroupLayout.PREFERRED_SIZE))))))
+                .addContainerGap(33, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -150,9 +217,13 @@ public class Cliente extends javax.swing.JFrame {
                 .addGap(23, 23, 23)
                 .addComponent(btn_cargarArchivo)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 217, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jScrollPane2)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 217, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 30, Short.MAX_VALUE)
-                .addComponent(btn_desmontarFS)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btn_desmontarFS)
+                    .addComponent(btn_guardar))
                 .addContainerGap())
         );
 
@@ -185,84 +256,46 @@ public class Cliente extends javax.swing.JFrame {
             nodo_seleccionado = (DefaultMutableTreeNode) v1;
             if (nodo_seleccionado.getUserObject() instanceof FileConText) {
                 file_seleccionado = ((FileConText) nodo_seleccionado.getUserObject()).getFile();
-                System.out.println(file_seleccionado);
                 if (file_seleccionado.isDirectory()) {
                     popMenuDir.show(evt.getComponent(), evt.getX(), evt.getY());
-                }else{
+                } else {
                     popMenuArchivo.show(evt.getComponent(), evt.getX(), evt.getY());
                 }
+            } else if (nodo_seleccionado.isRoot()) {
+                popMenuRoot.show(evt.getComponent(), evt.getX(), evt.getY());
             }
 
         }
-        /*
-        if (evt.isMetaDown()) {
-            int row = arbolCliente.getSelectionCount();
-            if (row >= 0) {
-                
-                
-                DefaultTreeModel modelo = (DefaultTreeModel) arbolCliente.getModel();
-                DefaultMutableTreeNode node = (DefaultMutableTreeNode) arbolCliente.getLastSelectedPathComponent();
-                System.out.println(arbolCliente.getLastSelectedPathComponent().getClass());
-                Object object = arbolCliente.getLastSelectedPathComponent();
-                if (node == null) //Nothing is selected.     
-                {
-
-                } else {
-                    if (object instanceof DefaultMutableTreeNode) {
-                        Object userObject = ((DefaultMutableTreeNode) object).getUserObject();
-                        if (userObject.toString().contains(".txt")) {
-
-                            popMenuArchivo.show(evt.getComponent(), evt.getX(), evt.getY());
-                        } else {
-                            if (node.isRoot()) {
-                                
-                            }else{
-                                popMenuDir.show(evt.getComponent(), evt.getX(), evt.getY());
-                            }
-                            
-                        }
-                    }
-                }
-            }
-        }*/
     }//GEN-LAST:event_arbolClienteMouseClicked
 
     private void crearDirMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_crearDirMouseClicked
-        
 
 
     }//GEN-LAST:event_crearDirMouseClicked
 
     private void crearDirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_crearDirActionPerformed
-        DefaultTreeModel modelo = (DefaultTreeModel) arbolCliente.getModel();
-        DefaultMutableTreeNode node = (DefaultMutableTreeNode) arbolCliente.getLastSelectedPathComponent();
-        System.out.println(node);
         String path = pathArchivo();
         String name = JOptionPane.showInputDialog(this, "Nombre del Directorio");
         path = path.concat(name);
         path = path.concat("/");
-        System.out.println(path);
         File dir = new File(path);
-        
+
         try {
-            server.crearArchivo(dir, false);    
+            server.crearArchivo(dir, false);
         } catch (Exception e) {
         }
         cargarArchivo();
-        
+
     }//GEN-LAST:event_crearDirActionPerformed
 
     private void eliminarDirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_eliminarDirActionPerformed
-        DefaultTreeModel modelo = (DefaultTreeModel) arbolCliente.getModel();
         DefaultMutableTreeNode node = (DefaultMutableTreeNode) arbolCliente.getLastSelectedPathComponent();
-        System.out.println(node);
         String path = pathArchivo();
         path = path.concat("/");
-        System.out.println(path);
         File dir = new File(path);
-        
+
         try {
-            server.eliminarArchivo(dir);    
+            server.eliminarArchivo(dir);
         } catch (Exception e) {
         }
         cargarArchivo();
@@ -271,23 +304,117 @@ public class Cliente extends javax.swing.JFrame {
     private void eliminarArchivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_eliminarArchivoActionPerformed
         DefaultTreeModel modelo = (DefaultTreeModel) arbolCliente.getModel();
         DefaultMutableTreeNode node = (DefaultMutableTreeNode) arbolCliente.getLastSelectedPathComponent();
-        System.out.println(node);
         String path = pathArchivo();
         //path = path.concat("/");
-        System.out.println(path);
         File dir = new File(path);
-        
+
         try {
-            server.eliminarArchivo(dir);    
+            server.eliminarArchivo(dir);
         } catch (Exception e) {
         }
         cargarArchivo();
     }//GEN-LAST:event_eliminarArchivoActionPerformed
 
+    private void crearArchivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_crearArchivoActionPerformed
+        String path = pathArchivo();
+        String name = JOptionPane.showInputDialog(this, "Nombre del Archivo");
+        path = path.concat(name);
+        path = path.concat("/");
+        File archivo = new File(path);
+
+        try {
+            server.crearArchivo(archivo, true);
+        } catch (Exception e) {
+        }
+        cargarArchivo();
+        ta_archivo.setVisible(true);
+        btn_guardar.setVisible(true);
+    }//GEN-LAST:event_crearArchivoActionPerformed
+
+    private void crearArchivo1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_crearArchivo1ActionPerformed
+        String path = pathArchivo();
+        String name = JOptionPane.showInputDialog(this, "Nombre del Archivo");
+        path = path.concat(name);
+        path = path.concat("/");
+        File archivo = new File(path);
+
+        try {
+            server.crearArchivo(archivo, true);
+        } catch (Exception e) {
+        }
+        cargarArchivo();
+        ta_archivo.setVisible(true);
+        btn_guardar.setVisible(true);
+
+    }//GEN-LAST:event_crearArchivo1ActionPerformed
+
+    private void crearDir1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_crearDir1MouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_crearDir1MouseClicked
+
+    private void crearDir1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_crearDir1ActionPerformed
+        String path = pathArchivo();
+        String name = JOptionPane.showInputDialog(this, "Nombre del Directorio");
+        path = path.concat(name);
+        path = path.concat("/");
+        File dir = new File(path);
+
+        try {
+            server.crearArchivo(dir, false);
+        } catch (Exception e) {
+        }
+        cargarArchivo();
+
+    }//GEN-LAST:event_crearDir1ActionPerformed
+
+    private void eliminarDir1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_eliminarDir1ActionPerformed
+        String path = pathArchivo();
+        //path = path.concat("/");
+        File dir = new File(path);
+        System.out.println(path);
+
+        try {
+            server.eliminarArchivo(dir);
+        } catch (Exception e) {
+        }
+        cargarArchivo();
+    }//GEN-LAST:event_eliminarDir1ActionPerformed
+
+    private void abrirArchivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_abrirArchivoActionPerformed
+        
+        ta_archivo.setVisible(true);
+        btn_guardar.setVisible(true);
+    }//GEN-LAST:event_abrirArchivoActionPerformed
+
+    private void btn_guardarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_guardarMouseClicked
+/*        String path = pathArchivo();
+        File archivo = new File(path);
+
+        try {
+            server.editarArchivo(archivo, ta_archivo.getText());
+        } catch (Exception e) {
+        }
+        cargarArchivo();*/
+        ta_archivo.setVisible(false);
+        btn_guardar.setVisible(false);
+    }//GEN-LAST:event_btn_guardarMouseClicked
+
     public void cargarArchivo() {
         try {
             DefaultTreeModel modelo = server.cargarDirectorio();
             arbolCliente.setModel(modelo);
+        } catch (Exception e) {
+        }
+
+    }
+
+    public void regenerar() {
+        try {
+            DefaultTreeModel modelo = server.cargarDirectorio();
+            arbolCliente.setModel(modelo);
+            arbolCliente.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+            arbolCliente.setSelectionRow(0);
+            
         } catch (Exception e) {
         }
 
@@ -333,24 +460,19 @@ public class Cliente extends javax.swing.JFrame {
 
         });
     }
-    public String pathArchivo( ){
+
+    public String pathArchivo() {
         String ruta = "./";
         arbolCliente.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-        
-            int row = arbolCliente.getSelectionCount();
-                DefaultTreeModel modelo = (DefaultTreeModel) arbolCliente.getModel();
-                DefaultMutableTreeNode node = (DefaultMutableTreeNode) arbolCliente.getLastSelectedPathComponent();
-                for (int i = 0; i < node.getPath().length; i++) {
-                    ruta =ruta.concat(node.getPath()[i].toString());
-                    ruta =ruta.concat("/");
-                    
-                }
-                
-                
-            
-        
+        DefaultMutableTreeNode node = (DefaultMutableTreeNode) arbolCliente.getLastSelectedPathComponent();
+        for (int i = 0; i < node.getPath().length; i++) {
+            ruta = ruta.concat(node.getPath()[i].toString());
+            ruta = ruta.concat("/");
+
+        }
+
         return ruta;
-}
+    }
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -358,15 +480,23 @@ public class Cliente extends javax.swing.JFrame {
     private javax.swing.JTree arbolCliente;
     private javax.swing.JButton btn_cargarArchivo;
     private javax.swing.JButton btn_desmontarFS;
+    private javax.swing.JButton btn_guardar;
     private javax.swing.JMenuItem crearArchivo;
+    private javax.swing.JMenuItem crearArchivo1;
     private javax.swing.JMenuItem crearDir;
+    private javax.swing.JMenuItem crearDir1;
     private javax.swing.JMenuItem eliminarArchivo;
     private javax.swing.JMenuItem eliminarDir;
+    private javax.swing.JMenuItem eliminarDir1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JPopupMenu popMenuArchivo;
     private javax.swing.JPopupMenu popMenuDir;
+    private javax.swing.JPopupMenu popMenuRoot;
+    private javax.swing.JTextArea ta_archivo;
     // End of variables declaration//GEN-END:variables
     DefaultMutableTreeNode nodo_seleccionado;
     File file_seleccionado;
+    File root;
 }

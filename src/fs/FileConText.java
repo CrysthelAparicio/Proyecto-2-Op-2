@@ -12,7 +12,7 @@ public class FileConText implements Serializable {
         this.file = file;
         this.texto = texto;
     }
-    
+
     public void setFile(File file) {
         this.file = file;
     }
