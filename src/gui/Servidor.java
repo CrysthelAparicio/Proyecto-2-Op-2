@@ -1,17 +1,16 @@
 package gui;
 
 import fs.FSInterfaz;
+import fs.Middleware;
 import fs.WatchDir;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.rmi.AlreadyBoundException;
-import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.rmi.server.UnicastRemoteObject;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -21,62 +20,20 @@ public class Servidor extends javax.swing.JFrame {
 
     private static final int PUERTO = 1100; // Si cambias aquí el puerto, recuerda cambiarlo en el cliente
 
-    public Remote remote;
     public Registry registry;
-
+    public Middleware server;
+    
     public Servidor() throws RemoteException, AlreadyBoundException {
         initComponents();
 
-        remote = UnicastRemoteObject.exportObject(new FSInterfaz() {
-            @Override
-            public void desmontar() throws RemoteException {
-            }
-
-            @Override
-            public DefaultTreeModel cargarDirectorio() throws RemoteException {
-                DefaultMutableTreeNode root = new DefaultMutableTreeNode("RootServer");
-                cargarArbol("./RootServer", root);
-                return new DefaultTreeModel(root);
-            }
-
-            @Override
-            public void crearArchivo(File archivoaCrear, boolean esArchivo) throws RemoteException {
-                System.out.println(archivoaCrear.getAbsoluteFile());
-                // crear un archivo vacio
-                // debe recibir la ruta completa, ej:
-                // C:\\Users\\Nohelia\\RootServer\\341234\\12442\\creame\\laptops.txt
-                File fileRes = pathRootServer(archivoaCrear);
-                
-                if (esArchivo) {
-                    System.out.println("es carpeta");
-                    fileRes.getParentFile().mkdirs();
-                } else {
-                    System.out.println("es carpeta");
-                    fileRes.mkdirs();
-                }
-            }
-
-            @Override
-            public void editarArchivo(File editandoArchivo, String texto) throws RemoteException {
-            }
-
-            @Override
-            public void eliminarArchivo(File archivoaEliminar) throws RemoteException {
-                // eliminar un archivo
-                // debe recibir la ruta completa, ej:
-                // C:\\Users\\Nohelia\\RootServer\\341234\\12442\\creame\\laptops.txt
-                File fileRes = pathRootServer(archivoaEliminar);
-
-                eliminarDirs(fileRes);
-            }
-        }, 0);
+        server = new Middleware();
 
         registry = LocateRegistry.createRegistry(PUERTO);
        	System.out.println("Servidor escuchando en el puerto " + String.valueOf(PUERTO));
-        registry.bind("Calculadora", remote); // Registrar calculadora        
+        registry.bind("fs", server); // Registrar
 
         DefaultMutableTreeNode root = new DefaultMutableTreeNode("RootServer");
-        cargarArbol("./RootServer", root);
+        server.cargarArbol("./RootServer", root);
         arbolServidor.setModel(new DefaultTreeModel(root));
 
         this.setLocationRelativeTo(null);
@@ -139,7 +96,7 @@ public class Servidor extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jButton1.setText("Algo");
+        jButton1.setText("Broadcast");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
@@ -173,7 +130,13 @@ public class Servidor extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        System.out.println("Este es el servidor");
+        try {
+            if (server.getClientes().size() > 0) {
+                server.broadcast();
+            }
+        } catch (RemoteException e) {
+            System.out.println(e);
+        }
     }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
