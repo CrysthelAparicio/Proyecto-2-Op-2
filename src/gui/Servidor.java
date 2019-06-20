@@ -1,6 +1,7 @@
 package gui;
 
 import fs.FSInterfaz;
+import fs.FileConText;
 import fs.Middleware;
 import fs.WatchDir;
 import java.io.File;
@@ -11,6 +12,7 @@ import java.rmi.AlreadyBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -23,51 +25,41 @@ public class Servidor extends javax.swing.JFrame {
     public Registry registry;
     public Middleware server;
     
-    public Servidor() throws RemoteException, AlreadyBoundException {
+    public Servidor() throws RemoteException, AlreadyBoundException {     
         initComponents();
-
+        jButton1.setVisible(false);
         server = new Middleware();
-
         registry = LocateRegistry.createRegistry(PUERTO);
        	System.out.println("Servidor escuchando en el puerto " + String.valueOf(PUERTO));
         registry.bind("fs", server); // Registrar
 
-        DefaultMutableTreeNode root = new DefaultMutableTreeNode("RootServer");
-        server.cargarArbol("./RootServer", root);
-        arbolServidor.setModel(new DefaultTreeModel(root));
+        // cargar arbol
+        update();
 
+        // iniciar hilo para observar cambios
+        try {
+            Path dir = Paths.get("RootServer");
+            Thread hilo = new Thread(new WatchDir(dir, true, this));
+            hilo.start();
+        } catch (IOException e) {
+            System.out.println(e);
+        }
+        
         this.setLocationRelativeTo(null);
     }
 
-    File pathRootServer(File archivo) {
-        // debe recibir la ruta completa, ej:
-        // C:\\Users\\Nohelia\\RootServer\\341234\\12442\\creame\\laptops.txt
-
-        String pathRes = archivo.getName();
-        File parent = archivo;
-
-        while (true) {
-            parent = parent.getParentFile();
-            if (parent.getName().equals("RootServer")) {
-                break;
-            }
-            pathRes = parent.getName() + "/" + pathRes;
-        }
-
-        pathRes = "./RootServer/" + pathRes;
-        return new File(pathRes);
+    public void update() {
+        // cargar arbol
+        DefaultMutableTreeNode root = new DefaultMutableTreeNode(new FileConText(new File("RootServer"), "", false, true));
+        server.cargarArbol("RootServer", root);
+        arbolServidor.setModel(new DefaultTreeModel(root));
     }
     
-    void eliminarDirs(File root) {
-        File[] allContents = root.listFiles();
-        if (allContents != null) {
-            for (File file : allContents) {
-                eliminarDirs(file);
-            }
+    public void broadcast(String fileChanged) throws RemoteException {
+        if (server.getClients().size() > 0) {
+            server.broadcast(fileChanged);
         }
-        root.delete();
     }
-    
     
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -113,19 +105,14 @@ public class Servidor extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        try {
-            if (server.getClientes().size() > 0) {
-                server.broadcast();
-            }
-        } catch (RemoteException e) {
-            System.out.println(e);
-        }
+//        try {
+//            broadcast("RootServer\\i am the beast i worship.txt");
+//        } catch (RemoteException e) {
+//            System.out.println(e);
+//        }
     }//GEN-LAST:event_jButton1ActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
+    public static void main(String args[]) {       
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
@@ -149,13 +136,6 @@ public class Servidor extends javax.swing.JFrame {
         }
         //</editor-fold>
 
-        try {
-            Path dir = Paths.get("./RootServer");
-            Thread hilo = new Thread(new WatchDir(dir, true));
-            hilo.start();
-        } catch (IOException e) {
-        }
-        
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
              public void run() {
