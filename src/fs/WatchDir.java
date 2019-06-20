@@ -31,11 +31,13 @@
 
 package fs;
 
+import gui.Servidor;
 import java.nio.file.*;
 import static java.nio.file.StandardWatchEventKinds.*;
 import static java.nio.file.LinkOption.*;
 import java.nio.file.attribute.*;
 import java.io.*;
+import java.rmi.RemoteException;
 import java.util.*;
 
 /**
@@ -47,6 +49,8 @@ public class WatchDir implements Runnable {
     private final WatchService watcher;
     private final Map<WatchKey,Path> keys;
     private final boolean recursive;
+    private boolean done = false;
+    private Servidor frame;
     private boolean trace = false;
 
     private static Path sDir;
@@ -94,15 +98,17 @@ public class WatchDir implements Runnable {
     /**
      * Creates a WatchService and registers the given directory
      */
-    public WatchDir(Path dir, boolean recursive) throws IOException {
+    public WatchDir(Path dir, boolean recursive, Servidor frame) throws IOException {
         this.watcher = FileSystems.getDefault().newWatchService();
         this.keys = new HashMap<WatchKey,Path>();
         this.recursive = recursive;
-
+        this.frame = frame;
+        
         if (recursive) {
             System.out.format("Scanning %s ...\n", dir);
             registerAll(dir);
             System.out.println("Done.");
+            this.done = true;
         } else {
             register(dir);
         }
@@ -114,7 +120,7 @@ public class WatchDir implements Runnable {
     /**
      * Process all events for keys queued to the watcher
      */
-    public void processEvents() {
+    public void processEvents() throws RemoteException {
         for (;;) {
 
             // wait for key to be signalled
@@ -184,24 +190,28 @@ public class WatchDir implements Runnable {
     
     @Override
     public void run() {
-        this.processEvents();
+        try {
+            this.processEvents();
+        } catch (RemoteException e) {
+            System.out.println(e);
+        }
     }
     
-    public static void main(String[] args) throws IOException {
-        // parse arguments
-        if (args.length == 0 || args.length > 2)
-            usage();
-        boolean recursive = false;
-        int dirArg = 0;
-        if (args[0].equals("-r")) {
-            if (args.length < 2)
-                usage();
-            recursive = true;
-            dirArg++;
-        }
-
-        // register directory and process its events
-        Path dir = Paths.get(args[dirArg]);
-        new WatchDir(dir, recursive).processEvents();
-    }
+//    public static void main(String[] args) throws IOException {
+//        // parse arguments
+//        if (args.length == 0 || args.length > 2)
+//            usage();
+//        boolean recursive = false;
+//        int dirArg = 0;
+//        if (args[0].equals("-r")) {
+//            if (args.length < 2)
+//                usage();
+//            recursive = true;
+//            dirArg++;
+//        }
+//
+//        // register directory and process its events
+//        Path dir = Paths.get(args[dirArg]);
+//        new WatchDir(dir, recursive).processEvents();
+//    }
 }
